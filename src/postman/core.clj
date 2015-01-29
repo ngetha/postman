@@ -98,7 +98,7 @@
 
           ; list of vals of the outcome
           valid-list-vals (list nil-params? msisdn-valid? tid-valid? amt-valid? via-valid? keys-valid?)
-          valid-list-msg (list "No param can be nil" "to must be in Intl format +254xxx" "|tid| must be < 64"
+          valid-list-msg (list "No param can be nil" "to must be in Intl format +254xxx" "|tid| must be <= 64"
                             "amt must be an integer"
                             (format "via must be one of %s" (clojure.string/join expected-via))
                             (format "missing keys %s" missing-keys-str))
@@ -115,7 +115,7 @@
           ; is all well?
           has-error? (not (reduce (fn [a b] (and a b)) true (vals valid-list)))
           error-msgs (map (fn [p]
-                            (log/infof "%s %s %s %s " p (get valid-list p) has-error? (get valid-list-errors p))
+                            (log/debugf "%s %s %s %s " p (get valid-list p) has-error? (get valid-list-errors p))
                             (if (not (get valid-list p))
                               (get valid-list-errors p)
                               (format "%s is ok" p))) (keys valid-list))
@@ -130,7 +130,6 @@
                                                    (log/errorf "!doSend -> %s" (pr-str err))
                                                    err)))]
       ; if the request is bad say why
-      (print error-msgs)
       (if (not has-error?)
         (do
           ; now queue this request
